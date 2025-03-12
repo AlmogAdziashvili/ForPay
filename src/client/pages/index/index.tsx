@@ -1,16 +1,13 @@
-import { AppShell, Burger, Button, Container, Flex, Group, Image, Stack, Text, TextInput } from '@mantine/core';
+import { AppShell, Burger, Button, Container, Divider, Flex, Group, Image, Stack, Text, TextInput } from '@mantine/core';
 import { createContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router';
+import { Route, Routes, useNavigate } from 'react-router';
 import { useDisclosure } from '@mantine/hooks';
 import Hero from './hero';
-
-const ForPayContext = createContext<
-  { user: any; wallets: any[] | null }
->({
-  user: null,
-  wallets: null,
-});
+import Deposit from './deposit';
+import { IconHome, IconSettings } from '@tabler/icons-react';
+import { ForPayContext } from './context';
+import { NavBar } from './navbar';
 
 function Index() {
   const [user, setUser] = useState(null);
@@ -45,10 +42,15 @@ function Index() {
           </Flex>
         </AppShell.Header>
 
-        <AppShell.Navbar bg='var(--mantine-color-blue-light)' p="md">Navbar</AppShell.Navbar>
+        <AppShell.Navbar bg='var(--mantine-color-blue-0)' p="md">
+          <NavBar toggleNavbar={toggle} />
+        </AppShell.Navbar>
 
         <AppShell.Main bg='var(--mantine-color-blue-light)' miw='100vw'>
-          <Hero />
+          <Routes>
+            <Route path='/deposit' element={<Deposit />} />
+            <Route path='*' element={<Hero />} />
+          </Routes>
         </AppShell.Main>
       </AppShell>
     </ForPayContext.Provider>

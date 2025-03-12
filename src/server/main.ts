@@ -1,10 +1,11 @@
-import express from 'express';
+import express, { RequestHandler } from 'express';
 import ViteExpress from 'vite-express';
 import mongoose, { ConnectOptions } from 'mongoose';
 import dotenv from 'dotenv';
 import { logger } from './logger.js';
 import { authRouter } from './auth.js';
 import session from 'express-session';
+import { transferRouter } from './transfer.js';
 
 dotenv.config();
 
@@ -27,13 +28,16 @@ app.use(session({
   secret: process.env.SESSION_SECRET!,
 }));
 
-app.use('/auth', authRouter);
-app.get('/', (req, res, next) => {
+const restrict: RequestHandler<{}, any, any, any, Record<string, any>> = (req, res, next) => {
   if (!req.session.user) {
     return res.redirect('/login');
   }
   return next();
-})
+};
+
+app.use('/auth', authRouter);
+app.use('/transfer', restrict, transferRouter);
+app.get('/', restrict)
 
 ViteExpress.listen(app, 3000, () =>
   logger.info('Server listening on http://localhost:3000')

@@ -1,0 +1,23 @@
+{
+  "version": "1.0",
+  "apis": [
+    {
+      "identifier": "open-finance",
+      "source": "@open-finance/v1.0#143i2n1clxbyxw4a",
+      "integrity": "sha512-V4ZKRFa5rEqkMd2VfPN+6WkB82ucbEthkBH0MxQCVk83nIM2UrEiLQEonp80mQ5mCd0L/Hpu6yCMDmL8kIhGCg==",
+      "installerVersion": "6.1.3"
+    },
+    {
+      "identifier": "open-finance-payments",
+      "source": "@open-finance/v1.0#143i2n1clxbyxw4a",
+      "integrity": "sha512-V4ZKRFa5rEqkMd2VfPN+6WkB82ucbEthkBH0MxQCVk83nIM2UrEiLQEonp80mQ5mCd0L/Hpu6yCMDmL8kIhGCg==",
+      "installerVersion": "6.1.3"
+    },
+    {
+      "identifier": "open-finance-data",
+      "source": "@open-finance/v1.0#19djafgm7nncijs",
+      "integrity": "sha512-2pOXfIgFUmhjlHXdAaNa7w9b4JwK7FYhvqXs0cQKhd5LQ6s4N0DQZ0NM0o4VyGSFd5y1Dqu4H7plaJ0CO0xiwQ==",
+      "installerVersion": "6.1.3"
+    }
+  ]
+}

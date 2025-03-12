@@ -9,6 +9,9 @@
     "build": "vite build"
   },
   "dependencies": {
+    "@api/open-finance-data": "file:.api/apis/open-finance-data",
+    "@api/open-finance-auth": "file:.api/apis/open-finance",
+    "@api/open-finance-payments": "file:.api/apis/open-finance-payments",
     "@mantine/core": "^7.17.1",
     "@mantine/dates": "^7.17.1",
     "@mantine/form": "^7.17.1",

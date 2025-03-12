@@ -4,6 +4,13 @@ import session from 'express-session';
 
 declare module 'express-session' {
   export interface SessionData {
-    user: { [key: string]: any };
+    user: {
+      firstName: string;
+      lastName: string;
+      identificationNumber: number;
+      birthDate: NativeDate;
+      walletId: Types.ObjectId;
+      password: string;
+    };
   }
 }
