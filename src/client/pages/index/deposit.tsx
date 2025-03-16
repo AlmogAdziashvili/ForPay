@@ -1,4 +1,4 @@
-import { Image, Button, Flex, Group, SimpleGrid, Stack, Text, TextInput, Title } from "@mantine/core";
+import { Button, Group, SimpleGrid, Stack, Text, TextInput, Center, Loader } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { GetProvidersResponse200 } from "@api/open-finance-data";
@@ -39,12 +39,19 @@ function Deposit() {
   const onSubmit = async (values: ReturnType<typeof form.getValues>) => {
     setIsLoading(true);
     try {
-      await axios.post('/transfer/deposit', values);
+      const { data } = await axios.post('/transfer/deposit', values);
+      if (data.scaOAuth) {
+        window.location.href = data.scaOAuth;
+      }
     } catch (error) {
       console.error(error);
     }
     setIsLoading(false);
   };
+
+  if (!providers.length) {
+    return <Center><Loader /></Center>;
+  }
 
   return (
     <Stack align='center' justify='center' p='xl' gap='xs'>
@@ -82,7 +89,7 @@ function Deposit() {
           {providers.map((provider) => {
             const maybeSelectedStyles = form.getValues().providerIdentifier === provider.providerFriendlyId ? { border: '2px solid var(--mantine-color-green-outline)', padding: 2 } : {};
             return (
-              <img onClick={pickProvider(provider.bankCode!, provider.providerFriendlyId!)} height={90} width={90} src={provider.image} style={{ borderRadius: '50%', objectFit: 'contain', background: '#fff', scale: 0.8, ...maybeSelectedStyles }} />
+              <img key={provider.providerFriendlyId} onClick={pickProvider(provider.bankCode!, provider.providerFriendlyId!)} height={90} width={90} src={provider.image} style={{ borderRadius: '50%', objectFit: 'contain', background: '#fff', scale: 0.8, ...maybeSelectedStyles }} />
             );
           })}
         </SimpleGrid>

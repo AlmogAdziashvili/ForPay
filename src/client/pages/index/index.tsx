@@ -1,5 +1,5 @@
-import { AppShell, Burger, Button, Container, Divider, Flex, Group, Image, Stack, Text, TextInput } from '@mantine/core';
-import { createContext, useEffect, useState } from 'react';
+import { AppShell, Burger, Center, Flex, Image, Loader } from '@mantine/core';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Route, Routes, useNavigate } from 'react-router';
 import { useDisclosure } from '@mantine/hooks';
@@ -47,10 +47,12 @@ function Index() {
         </AppShell.Navbar>
 
         <AppShell.Main bg='var(--mantine-color-blue-light)' miw='100vw'>
-          <Routes>
-            <Route path='/deposit' element={<Deposit />} />
-            <Route path='*' element={<Hero />} />
-          </Routes>
+          {user ? (
+            <Routes>
+              <Route path='/deposit' element={<Deposit />} />
+              <Route path='*' element={<Hero />} />
+            </Routes>
+          ) : <Center><Loader /></Center>}
         </AppShell.Main>
       </AppShell>
     </ForPayContext.Provider>
