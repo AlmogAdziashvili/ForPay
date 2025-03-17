@@ -5,7 +5,7 @@ import { Route, Routes, useNavigate } from 'react-router';
 import { useDisclosure } from '@mantine/hooks';
 import Hero from './hero';
 import Deposit from './deposit';
-import { IconHome, IconSettings } from '@tabler/icons-react';
+import DepositList from './deposit_list';
 import { ForPayContext } from './context';
 import { NavBar } from './navbar';
 
@@ -49,6 +49,7 @@ function Index() {
         <AppShell.Main bg='var(--mantine-color-blue-light)' miw='100vw'>
           {user ? (
             <Routes>
+              <Route path='/deposit-list' element={<DepositList />} />
               <Route path='/deposit' element={<Deposit />} />
               <Route path='*' element={<Hero />} />
             </Routes>
