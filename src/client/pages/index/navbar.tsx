@@ -1,10 +1,11 @@
 import { Divider, Flex, Text } from "@mantine/core";
-import { IconHome, IconPigMoney } from "@tabler/icons-react";
+import { IconHome, IconPigMoney, IconHomeDollar } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
 const navigationRoutes = [
   { title: 'בית', icon: IconHome, to: '/' },
   { title: 'הפקדה', icon: IconPigMoney, to: '/deposit' },
+  {title: 'משיכה',icon:IconHomeDollar, to:'/withdraw' }
 ];
 
 export function NavBar(props: { toggleNavbar: () => void }) {

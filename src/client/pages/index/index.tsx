@@ -8,6 +8,7 @@ import Deposit from './deposit';
 import { IconHome, IconSettings } from '@tabler/icons-react';
 import { ForPayContext } from './context';
 import { NavBar } from './navbar';
+import Withdraw from './withdraw';
 
 function Index() {
   const [user, setUser] = useState(null);
@@ -50,6 +51,7 @@ function Index() {
           {user ? (
             <Routes>
               <Route path='/deposit' element={<Deposit />} />
+              <Route path='/withdraw' element={<Withdraw/>}/>
               <Route path='*' element={<Hero />} />
             </Routes>
           ) : <Center><Loader /></Center>}
