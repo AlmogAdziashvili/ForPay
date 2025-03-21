@@ -74,6 +74,11 @@ transferRouter.post('/deposit', async (req, res) => {
   return res.json({ scaOAuth });
 });
 
+transferRouter.get('/deposits', async (req, res) => {
+  const deposits = await Deposit.find({ userId: req.session.user?._id, status: 'APPROVED' });
+  return res.json(deposits);
+});
+
 transferRouter.get('/callback', async (req, res) => {
   const { paymentId, paymentStatus } = req.query;
 

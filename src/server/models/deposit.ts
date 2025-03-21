@@ -20,6 +20,8 @@ const depositSchema = new Schema({
         ref: 'User',
         required: true
     }
+}, {
+    timestamps: true
 });
 
 export default model('Deposit', depositSchema);
