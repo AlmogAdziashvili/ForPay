@@ -8,6 +8,7 @@ import Deposit from './deposit';
 import DepositList from './deposit_list';
 import { ForPayContext } from './context';
 import { NavBar } from './navbar';
+import Transfer from './transfer';
 
 function Index() {
   const [user, setUser] = useState(null);
@@ -49,6 +50,7 @@ function Index() {
         <AppShell.Main bg='var(--mantine-color-blue-light)' miw='100vw'>
           {user ? (
             <Routes>
+              <Route path='/transfer' element={<Transfer />} />
               <Route path='/deposit-list' element={<DepositList />} />
               <Route path='/deposit' element={<Deposit />} />
               <Route path='*' element={<Hero />} />

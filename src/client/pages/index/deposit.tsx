@@ -23,7 +23,7 @@ function Deposit() {
     },
 
     validate: {
-      amount: (value) => ((value || value < 1) ? null : 'סכום חייב להיות גדול מ-0'),
+      amount: (value) => ((value && value > 0) ? null : 'סכום חייב להיות גדול מ-0'),
       branch: (value) => (value ? null : 'שדה חובה'),
       bban: (value) => (value ? null : 'שדה חובה'),
       providerId: (value) => (value ? null : 'שדה חובה'),

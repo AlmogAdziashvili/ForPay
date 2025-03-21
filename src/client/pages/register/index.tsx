@@ -55,7 +55,7 @@ function Form1(props: any) {
     initialValues: {
       firstName: '',
       lastName: '',
-      birthDate: today18YearsAgo,
+      birthDate: null,
     },
 
     validate: {
