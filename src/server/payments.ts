@@ -23,15 +23,15 @@ async function getToken() {
   return token || '';
 }
 
-const transferRouter = Router();
+const paymentsRouter = Router();
 
-transferRouter.get('/providers', async (req, res) => {
+paymentsRouter.get('/providers', async (req, res) => {
   const sdk = openFinanceData.default.auth(await getToken());
   const providersResponse = await sdk.getProviders();
   return res.json(providersResponse.data.filter((provider) => !!provider.bankCode).sort((a, b) => (a.sortIndex || 99) - (b.sortIndex || 99)));
 });
 
-transferRouter.post('/deposit', async (req, res) => {
+paymentsRouter.post('/deposit', async (req, res) => {
   const { providerIdentifier, providerId, bban, amount, branch } = req.body;
   if (!req.session.user?.identificationNumber) {
     return res.sendStatus(401);
@@ -44,7 +44,7 @@ transferRouter.post('/deposit', async (req, res) => {
   const { data } = await axios.post('https://api.open-finance.ai/v2/pay/open-banking-init', {
     providerId: providerIdentifier,
     psuId: req.session.user.identificationNumber.toString(),
-    redirectUrl: 'http://localhost:3000/transfer/callback',
+    redirectUrl: 'http://localhost:3000/payments/callback',
     paymentInformation: {
       amount,
       creditorAccountNumber: process.env.OF_CREDITOR_ACCOUNT_NUMBER!,
@@ -74,12 +74,12 @@ transferRouter.post('/deposit', async (req, res) => {
   return res.json({ scaOAuth });
 });
 
-transferRouter.get('/deposits', async (req, res) => {
+paymentsRouter.get('/deposits', async (req, res) => {
   const deposits = await Deposit.find({ userId: req.session.user?._id, status: 'APPROVED' });
   return res.json(deposits);
 });
 
-transferRouter.get('/callback', async (req, res) => {
+paymentsRouter.get('/callback', async (req, res) => {
   const { paymentId, paymentStatus } = req.query;
 
   if (!paymentId) {
@@ -111,4 +111,4 @@ transferRouter.get('/callback', async (req, res) => {
   return res.redirect('/?deposit=success');
 });
 
-export { transferRouter };
+export { paymentsRouter };

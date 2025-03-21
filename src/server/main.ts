@@ -5,7 +5,7 @@ import dotenv from 'dotenv';
 import { logger } from './logger.js';
 import { authRouter } from './auth.js';
 import session from 'express-session';
-import { transferRouter } from './transfer.js';
+import { paymentsRouter } from './payments.js';
 
 dotenv.config();
 
@@ -36,7 +36,7 @@ const restrict: RequestHandler<{}, any, any, any, Record<string, any>> = (req, r
 };
 
 app.use('/auth', authRouter);
-app.use('/transfer', restrict, transferRouter);
+app.use('/payments', restrict, paymentsRouter);
 app.get('/', restrict)
 
 ViteExpress.listen(app, 3000, () =>

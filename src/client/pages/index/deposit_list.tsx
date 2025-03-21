@@ -14,7 +14,7 @@ function DepositList(props: DepositListProps) {
   const [transactions, setTransactions] = useState<any[] | null>(null);
 
   useEffect(() => {
-    fetch('/transfer/deposits')
+    fetch('/payments/deposits')
       .then((res) => res.json())
       .then((data) => setTransactions(data.slice(0, props.limit ?? data.length)));
   }, []);
