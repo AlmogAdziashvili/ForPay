@@ -199,7 +199,7 @@ function Register() {
         {step === 1 && <Form1 onSubmit={handleForm1Submit} />}
         {step === 2 && <Form2 onSubmit={submitRegister} />}
         {error && <Text c='red'>{error}</Text>}
-        <Button display={step ? 'none' : 'block'} fullWidth variant='subtle' color='green' onClick={() => navigate('/register')}>התחבר לארנק קיים</Button>
+        <Button display={step ? 'none' : 'block'} fullWidth variant='subtle' color='green' onClick={() => navigate('/login')}>התחבר לארנק קיים</Button>
       </Stack>
       <Stack align='center' mt='10vh'>
         <Stepper active={step} color='green' miw={300} onStepClick={goBack}>
