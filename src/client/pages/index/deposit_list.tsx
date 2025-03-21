@@ -1,25 +1,19 @@
-import { Group, ScrollArea, Text, Table, List, Stack, Card, Badge, Flex, Title } from "@mantine/core";
-import { ForPayContext } from ".";
-import { useContext, useEffect } from "react";
-import { notifications } from '@mantine/notifications';
-import { IconArrowDownLeft, IconArrowDownRight, IconArrowUpRight } from "@tabler/icons-react";
-const formatDate = (date: Date) => {
+import { Text, Stack, Card, Badge, Flex, Title } from "@mantine/core";
+import { useEffect, useState } from "react";
+
+const formatDate = (timestamp: string) => {
+  const date = new Date(timestamp ?? Date.now());
   return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
 };
-const d = {
-  paymentId: '1',
-  amount: 1,
-  status: 'APPROVED',
-  created_at: new Date(),
-}
-
-const transactions = [
-  { paymentId: "1", amount: 1, status: "APPROVED", created_at: new Date() },
-  { paymentId: "2", amount: -100, status: "DECLINED", created_at: new Date("2025-03-16") },
-  { paymentId: "3", amount: 500, status: "APPROVED", created_at: new Date("2025-03-15") },
-];
 
 function DepositList() {
+  const [transactions, setTransactions] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch('/transfer/deposits')
+      .then((res) => res.json())
+      .then((data) => setTransactions(data));
+  }, []);
 
   return (
 
@@ -34,7 +28,7 @@ function DepositList() {
               </Text>
             </Stack>
             <Flex align="end">
-            <Title>
+            <Title style={{ color: tx.amount > 0 ? 'green' : 'red' }}>
               {tx.amount}
             </Title>
             <Text mb='2'>₪</Text>
