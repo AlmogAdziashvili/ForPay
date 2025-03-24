@@ -5,6 +5,8 @@ import { logger } from './logger.js';
 import axios from 'axios';
 import Deposit from './models/deposit.js';
 import Wallet from './models/wallet.js';
+import user from './models/user.js';
+import Transfer from './models/transfer.js';
 
 let token: string | null = null;
 let tokenExpiration: number | null = null;
@@ -74,9 +76,16 @@ paymentsRouter.post('/deposit', async (req, res) => {
   return res.json({ scaOAuth });
 });
 
-paymentsRouter.get('/deposits', async (req, res) => {
-  const deposits = await Deposit.find({ userId: req.session.user?._id, status: 'APPROVED' });
-  return res.json(deposits);
+paymentsRouter.get('/actions', async (req, res) => {
+  const deposits = (await Deposit.find({ userId: req.session.user?._id, status: 'APPROVED' })).map(d => ({ ...d.toObject(), type: 'DEPOSIT' }));
+  const transfersFromMe = (await Transfer.find({ senderId: req.session.user?._id }).populate('recipientId')).map(t => {
+    return { ...t.toObject(), type: 'TRANSFER_FROM_ME', amount: -1 * t.amount };
+  });
+  const transfersToMe = (await Transfer.find({ recipientId: req.session.user?._id }).populate('senderId')).map(t => {
+    return { ...t.toObject(), type: 'TRANSFER_TO_ME' };
+  });
+  const actions = [...deposits, ...transfersFromMe, ...transfersToMe].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return res.json(actions);
 });
 
 paymentsRouter.get('/callback', async (req, res) => {
@@ -109,6 +118,40 @@ paymentsRouter.get('/callback', async (req, res) => {
   await wallet.save();
 
   return res.redirect('/?deposit=success');
+});
+
+paymentsRouter.post('/transfer', async (req, res) => {
+  const { amount, identificationNumber } = req.body;
+  if (!req.session.user?.walletId || !amount || amount <= 0 || !identificationNumber || !(/^\d{9}$/).test(identificationNumber)) {
+    return res.sendStatus(400);
+  }
+
+  const wallet = await Wallet.findOne({ _id: req.session.user.walletId });
+  const recipient = await user.findOne({ identificationNumber });
+  const recipientWallet = await Wallet.findOne({ _id: recipient?.walletId });
+
+  if (!wallet || !recipient || !recipientWallet) {
+    return res.sendStatus(404);
+  }
+
+  if (amount > wallet.balance) {
+    return res.sendStatus(403);
+  }
+
+  const transfer = new Transfer({
+    amount,
+    senderId: req.session.user._id,
+    recipientId: recipient._id
+  });
+
+  wallet.balance -= amount;
+  recipientWallet.balance += amount;
+
+  await wallet.save();
+  await recipientWallet.save();
+  await transfer.save();
+
+  return res.sendStatus(200);
 });
 
 export { paymentsRouter };

@@ -26,11 +26,22 @@ function Hero() {
 
   useEffect(() => {
     const isDepositSuccess = queryParams.get('deposit') === 'success';
+    const isTransferSuccess = queryParams.get('transfer') === 'success';
+
     if (isDepositSuccess && !didNotificationShow) {
       didNotificationShow = true;
       notifications.show({
         title: 'הפקדה בוצעה בהצלחה',
         message: 'הפקדת כסף לחשבון שלך בהצלחה',
+        color: 'teal',
+      });
+    }
+
+    if (isTransferSuccess && !didNotificationShow) {
+      didNotificationShow = true;
+      notifications.show({
+        title: 'העברה בוצעה בהצלחה',
+        message: 'ביצעת העברה בהצלחה',
         color: 'teal',
       });
     }

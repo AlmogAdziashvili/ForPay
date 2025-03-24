@@ -10,7 +10,7 @@ function Transfer() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [providers, setProviders] = useState<GetProvidersResponse200>([]);
-  const { wallets } = useContext(ForPayContext);
+  const { wallets, reload } = useContext(ForPayContext);
 
   useEffect(() => {
     axios.get('/payments/providers').then((response) => setProviders(response.data)).catch(() => setProviders([]));
@@ -43,9 +43,18 @@ function Transfer() {
     setIsLoading(true);
     try {
       await axios.post('/payments/transfer', values);
-      navigate('/');
-    } catch (error) {
-      console.error(error);
+      reload();
+      navigate('/?transfer=success');
+    } catch (error: any) {
+      if (error.response.status === 400) {
+        form.setErrors({ amount: 'אחד או יותר מהשדות שגויים' });
+      } else if (error.response.status === 404) {
+        form.setErrors({ amount: 'לא נמצא חשבון' });
+      } else if (error.response.status === 403) {
+        form.setErrors({ amount: 'אין לך מספיק כסף בחשבון' });
+      } else {
+        form.setErrors({ amount: 'שגיאה בעת ביצוע ההעברה' });
+      }
     } finally {
       setIsLoading(false);
     }

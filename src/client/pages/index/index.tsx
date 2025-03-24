@@ -20,8 +20,16 @@ function Index() {
     axios.get('/auth/me').then((response) => { setUser(response.data.user); setWallets([response.data.parentWallet, ...response.data.childrenWallets]); }).catch(() => navigate('/login'));
   }, []);
 
+  const reload = () => {
+    setWallets(null);
+    setUser(null);
+    axios.get('/auth/me')
+      .then((response) => { setUser(response.data.user); setWallets([response.data.parentWallet, ...response.data.childrenWallets]); })
+      .catch(() => navigate('/login'));
+  };
+
   return (
-    <ForPayContext.Provider value={{ user, wallets }}>
+    <ForPayContext.Provider value={{ user, wallets, reload }}>
       <AppShell
         header={{ height: 60 }}
         padding="md"

@@ -1,4 +1,4 @@
-import { Text, Stack, Card, Badge, Flex, Title, Center, Loader } from "@mantine/core";
+import { Text, Stack, Card, Flex, Title, Center, Loader } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 const formatDate = (timestamp: string) => {
@@ -9,35 +9,46 @@ const formatDate = (timestamp: string) => {
 interface DepositListProps {
   limit?: number;
 }
+function actionToDescription (action: any) {
+  if (action.type === 'DEPOSIT') {
+    return 'הפקדה לארנק';
+  }
+  if (action.type === 'TRANSFER_FROM_ME') {
+    return `העברת כסף ל${action.recipientId.firstName} ${action.recipientId.lastName}`;
+  }
+  if (action.type === 'TRANSFER_TO_ME') {
+    return `העברת כסף מ${action.senderId.firstName} ${action.senderId.lastName}`;
+  }
+  return '';
+}
 
 function DepositList(props: DepositListProps) {
-  const [transactions, setTransactions] = useState<any[] | null>(null);
+  const [actions, setActions] = useState<any[] | null>(null);
 
   useEffect(() => {
-    fetch('/payments/deposits')
+    fetch('/payments/actions')
       .then((res) => res.json())
-      .then((data) => setTransactions(data.slice(0, props.limit ?? data.length)));
+      .then((data) => setActions(data.slice(0, props.limit ?? data.length)));
   }, []);
 
-  if (!transactions) {
+  if (!actions) {
     return <Center><Loader /></Center>;
   }
 
-
   return (
     <Stack>
-      {transactions.map((tx) => (
-        <Card key={tx.paymentId} shadow="sm" p="xs" radius="md" withBorder w='100%'>
+      {actions.map((action) => (
+        <Card key={action.paymentId} shadow="sm" p="xs" radius="md" withBorder w='100%'>
           <Flex justify={"space-between"} align={"center"}>
             <Stack gap="2">
-              <Text size="sm" c="gray">{formatDate(tx.created_at)}</Text>
+              <Text size="sm" c="gray">{formatDate(action.created_at)}</Text>
               <Text size="md">
-                הפקדה לארנק
+                {actionToDescription(action)}
               </Text>
             </Stack>
             <Flex align="end">
-              <Title style={{ color: tx.amount > 0 ? 'green' : 'red' }}>
-                {tx.amount}
+              <Title style={{ color: action.amount > 0 ? 'green' : 'red' }}>
+                {action.amount}
               </Title>
               <Text mb='2'>₪</Text>
             </Flex>
