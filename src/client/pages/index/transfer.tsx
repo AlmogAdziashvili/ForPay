@@ -4,9 +4,11 @@ import { useContext, useEffect, useState } from "react";
 import { GetProvidersResponse200 } from "@api/open-finance-data";
 import axios from "axios";
 import { ForPayContext } from "./context";
+import { useNavigate } from "react-router";
 
 function Transfer() {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
   const [providers, setProviders] = useState<GetProvidersResponse200>([]);
   const { wallets } = useContext(ForPayContext);
 
@@ -39,7 +41,14 @@ function Transfer() {
 
   const onSubmit = async (values: ReturnType<typeof form.getValues>) => {
     setIsLoading(true);
-    console.log(values);
+    try {
+      await axios.post('/payments/transfer', values);
+      navigate('/');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!providers.length) {
