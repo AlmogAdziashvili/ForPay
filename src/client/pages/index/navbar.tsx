@@ -1,24 +1,29 @@
 import { Divider, Flex, Text } from "@mantine/core";
-import { IconBrandStorybook, IconCashBanknoteMove, IconCashPlus, IconHome } from "@tabler/icons-react";
+import { IconCashBanknoteMove, IconCashPlus, IconHistory, IconHome, IconLogout } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
 const navigationRoutes = [
   { title: 'בית', icon: IconHome, to: '/' },
   { title: 'הפקדה', icon: IconCashPlus, to: '/deposit' },
   { title: 'העברה', icon: IconCashBanknoteMove, to: '/transfer' },
-  { title: 'היסטוריית הפקדות', icon: IconBrandStorybook, to: '/deposit-list' },
+  { title: 'היסטוריית פעולות', icon: IconHistory, to: '/deposit-list' },
+  { title: 'התנתק', icon: IconLogout, to: '/auth/logout', bottom: true },
 ];
 
 export function NavBar(props: { toggleNavbar: () => void }) {
   const navigate = useNavigate();
 
   const navigateTo = (to: string) => () => {
+    if (to.startsWith('/auth')) {
+      window.location.href = to;
+      return;
+    }
     navigate(to);
     props.toggleNavbar();
   }
 
   return navigationRoutes.map((route, i) => (
-    <div key={i}>
+    <div key={i} style={{ marginTop: route.bottom ? 'auto' : 0 }}>
       <Flex p='lg' gap='md' align='center' onClick={navigateTo(route.to)} style={{ cursor: 'pointer' }}>
         <route.icon />
         <Text size='lg'>{route.title}</Text>

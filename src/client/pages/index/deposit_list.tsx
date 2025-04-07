@@ -41,7 +41,7 @@ function DepositList(props: DepositListProps) {
         <Card key={action.paymentId} shadow="sm" p="xs" radius="md" withBorder w='100%'>
           <Flex justify={"space-between"} align={"center"}>
             <Stack gap="2">
-              <Text size="sm" c="gray">{formatDate(action.created_at)}</Text>
+              <Text size="sm" c="gray">{formatDate(action.createdAt)}</Text>
               <Text size="md">
                 {actionToDescription(action)}
               </Text>
