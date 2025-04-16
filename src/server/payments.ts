@@ -134,7 +134,7 @@ paymentsRouter.get('/callback', async (req, res) => {
 });
 
 paymentsRouter.post('/withdraw', async (req, res) => {
-  const { providerIdentifier, providerId, bban, amount, branch } = req.body;
+  const { providerId, bban, amount, branch } = req.body;
 
   if (!req.session.user) {
     return res.sendStatus(401);
@@ -176,7 +176,7 @@ paymentsRouter.post('/withdraw', async (req, res) => {
     }
   );
   const { scaOAuth } = data;
-  const message = `🔔 *New Withdrawal Request*\n👤 *User:* ${req.session.user._id}\n💰 *Amount:* ${amount} ILS\n *Open Finance Payment Link*: ${scaOAuth}`;
+  const message = `🔔 *New Withdrawal Request*\n👤 *User:* ${req.session.user.identificationNumber}\n💰 *Amount:* ${amount} ILS\n *Open Finance Payment Link*: ${scaOAuth}`;
   await sendTelegramMessage(message);
 
   return res.sendStatus(201);
