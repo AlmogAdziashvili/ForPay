@@ -8,6 +8,7 @@ import Wallet from './models/wallet.js';
 import { sendTelegramMessage } from './telegram.js';
 import user from './models/user.js';
 import Transfer from './models/transfer.js';
+import Withdraw from './models/withdraw.js';
 
 let token: string | null = null;
 let tokenExpiration: number | null = null;
@@ -97,7 +98,8 @@ paymentsRouter.get('/actions', async (req, res) => {
   const transfersToMe = (await Transfer.find({ recipientId: req.session.user?._id }).populate('senderId')).map(t => {
     return { ...t.toObject(), type: 'TRANSFER_TO_ME' };
   });
-  const actions = [...deposits, ...transfersFromMe, ...transfersToMe].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  const withdraws = (await Withdraw.find({ userId: req.session.user?._id })).map(w => ({ ...w.toObject(), type: 'WITHDRAW', amount: -1 * w.amount }));
+  const actions = [...deposits, ...transfersFromMe, ...transfersToMe, ...withdraws].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   return res.json(actions);
 });
 
@@ -178,6 +180,17 @@ paymentsRouter.post('/withdraw', async (req, res) => {
   const { scaOAuth } = data;
   const message = `🔔 *New Withdrawal Request*\n👤 *User:* ${req.session.user.identificationNumber}\n💰 *Amount:* ${amount} ILS\n *Open Finance Payment Link*: ${scaOAuth}`;
   await sendTelegramMessage(message);
+
+  wallet.balance -= amount;
+  await wallet.save();
+
+  const withdraw = new Withdraw({
+    paymentId: data.paymentId,
+    amount,
+    userId: req.session.user._id,
+  });
+
+  await withdraw.save();
 
   return res.sendStatus(201);
 });

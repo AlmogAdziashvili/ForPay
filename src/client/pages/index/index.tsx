@@ -8,6 +8,7 @@ import Deposit from './deposit';
 import DepositList from './deposit_list';
 import { ForPayContext } from './context';
 import { NavBar } from './navbar';
+import Withdraw from './withdraw';
 import Transfer from './transfer';
 
 function Index() {
@@ -61,6 +62,7 @@ function Index() {
               <Route path='/transfer' element={<Transfer />} />
               <Route path='/deposit-list' element={<DepositList />} />
               <Route path='/deposit' element={<Deposit />} />
+              <Route path='/withdraw' element={<Withdraw/>}/>
               <Route path='*' element={<Hero />} />
             </Routes>
           ) : <Center><Loader /></Center>}
