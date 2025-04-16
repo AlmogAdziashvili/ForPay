@@ -5,10 +5,11 @@ import { Route, Routes, useNavigate } from 'react-router';
 import { useDisclosure } from '@mantine/hooks';
 import Hero from './hero';
 import Deposit from './deposit';
-import { IconHome, IconSettings } from '@tabler/icons-react';
+import DepositList from './deposit_list';
 import { ForPayContext } from './context';
 import { NavBar } from './navbar';
 import Withdraw from './withdraw';
+import Transfer from './transfer';
 
 function Index() {
   const [user, setUser] = useState(null);
@@ -20,8 +21,16 @@ function Index() {
     axios.get('/auth/me').then((response) => { setUser(response.data.user); setWallets([response.data.parentWallet, ...response.data.childrenWallets]); }).catch(() => navigate('/login'));
   }, []);
 
+  const reload = () => {
+    setWallets(null);
+    setUser(null);
+    axios.get('/auth/me')
+      .then((response) => { setUser(response.data.user); setWallets([response.data.parentWallet, ...response.data.childrenWallets]); })
+      .catch(() => navigate('/login'));
+  };
+
   return (
-    <ForPayContext.Provider value={{ user, wallets }}>
+    <ForPayContext.Provider value={{ user, wallets, reload }}>
       <AppShell
         header={{ height: 60 }}
         padding="md"
@@ -50,6 +59,8 @@ function Index() {
         <AppShell.Main bg='var(--mantine-color-blue-light)' miw='100vw'>
           {user ? (
             <Routes>
+              <Route path='/transfer' element={<Transfer />} />
+              <Route path='/deposit-list' element={<DepositList />} />
               <Route path='/deposit' element={<Deposit />} />
               <Route path='/withdraw' element={<Withdraw/>}/>
               <Route path='*' element={<Hero />} />

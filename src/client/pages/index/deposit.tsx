@@ -9,7 +9,7 @@ function Deposit() {
   const [providers, setProviders] = useState<GetProvidersResponse200>([]);
 
   useEffect(() => {
-    axios.get('/transfer/providers').then((response) => setProviders(response.data)).catch(() => setProviders([]));
+    axios.get('/payments/providers').then((response) => setProviders(response.data)).catch(() => setProviders([]));
   }, []);
 
   const form = useForm({
@@ -23,7 +23,7 @@ function Deposit() {
     },
 
     validate: {
-      amount: (value) => ((value || value < 1) ? null : 'סכום חייב להיות גדול מ-0'),
+      amount: (value) => ((value && value > 0) ? null : 'סכום חייב להיות גדול מ-0'),
       branch: (value) => (value ? null : 'שדה חובה'),
       bban: (value) => (value ? null : 'שדה חובה'),
       providerId: (value) => (value ? null : 'שדה חובה'),
@@ -39,7 +39,7 @@ function Deposit() {
   const onSubmit = async (values: ReturnType<typeof form.getValues>) => {
     setIsLoading(true);
     try {
-      const { data } = await axios.post('/transfer/deposit', values);
+      const { data } = await axios.post('/payments/deposit', values);
       if (data.scaOAuth) {
         window.location.href = data.scaOAuth;
       }
