@@ -19,6 +19,9 @@ function actionToDescription (action: any) {
   if (action.type === 'TRANSFER_TO_ME') {
     return `העברת כסף מ${action.senderId.firstName} ${action.senderId.lastName}`;
   }
+  if (action.type === 'WITHDRAW') {
+    return 'משיכת כסף מהארנק';
+  }
   return '';
 }
 

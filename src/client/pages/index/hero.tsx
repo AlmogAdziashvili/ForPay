@@ -1,7 +1,7 @@
 import { ActionIcon, Alert, Button, Flex, Stack, Text, Title } from "@mantine/core";
 import { ForPayContext } from ".";
 import { useContext, useEffect } from "react";
-import { IconCashBanknoteMove, IconCashPlus, IconInfoCircle, IconPigMoney } from '@tabler/icons-react';
+import { IconCashBanknoteMove, IconCashMinus, IconCashPlus, IconInfoCircle, IconPigMoney } from '@tabler/icons-react';
 import { useNavigate } from "react-router";
 import { notifications } from '@mantine/notifications';
 import DepositList from "./deposit_list";
@@ -27,6 +27,7 @@ function Hero() {
   useEffect(() => {
     const isDepositSuccess = queryParams.get('deposit') === 'success';
     const isTransferSuccess = queryParams.get('transfer') === 'success';
+    const isWithdrawSuccess = queryParams.get('withdraw') === 'success';
 
     if (isDepositSuccess && !didNotificationShow) {
       didNotificationShow = true;
@@ -42,6 +43,15 @@ function Hero() {
       notifications.show({
         title: 'העברה בוצעה בהצלחה',
         message: 'ביצעת העברה בהצלחה',
+        color: 'teal',
+      });
+    }
+
+    if (isWithdrawSuccess && !didNotificationShow) {
+      didNotificationShow = true;
+      notifications.show({
+        title: 'משיכת כסף בוצעה בהצלחה',
+        message: 'משיכת כסף מהחשבון שלך בוצעה בהצלחה',
         color: 'teal',
       });
     }
@@ -69,6 +79,12 @@ function Hero() {
             <IconCashBanknoteMove />
           </ActionIcon>
           <Text size='xs'>העברה</Text>
+        </Flex>
+        <Flex direction='column' align='center'>
+          <ActionIcon gradient={{ from: 'teal', to: 'green' }} variant="gradient" size="64" radius="xl" onClick={() => navigate('/withdraw')}>
+            <IconCashMinus />
+          </ActionIcon>
+          <Text size='xs'>משיכה</Text>
         </Flex>
       </Flex>
       <Flex justify='space-between' align='center'>
