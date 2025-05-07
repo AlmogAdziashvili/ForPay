@@ -1,9 +1,10 @@
-import { Button, Checkbox, Container, Grid, Group, Image, SimpleGrid, Stack, Stepper, Text, TextInput } from '@mantine/core';
+import { Button, Checkbox, Container, Grid, Group, Image, SegmentedControl, Select, SimpleGrid, Stack, Stepper, Switch, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
+import { GetProvidersResponse200 } from '@api/open-finance-data';
 
 function Form0(props: any) {
   const form1 = useForm({
@@ -48,6 +49,116 @@ function Form0(props: any) {
 }
 
 function Form1(props: any) {
+  const [type, setType] = useState<'USER' | 'MERCHANT'>('USER');
+  const onSubmit = (values: any) => {
+    if (type === 'MERCHANT') {
+      props.onSubmit({
+        ...values,
+        bankCode: providers.find((provider) => provider.providerFriendlyId === values.providerFriendlyId)?.bankCode,
+        type,
+      });
+    } else {
+      props.onSubmit({
+        ...values,
+        type,
+      });
+    }
+  }
+  const [providers, setProviders] = useState<GetProvidersResponse200>([]);
+  useEffect(() => {
+    axios.get('/payments/providers').then((response) => setProviders(response.data)).catch(() => setProviders([]));
+  }, []);
+  const typeSwitch = (
+    <SegmentedControl
+      value={type}
+      onChange={(value) => setType(value as 'USER' | 'MERCHANT')}
+      data={[
+        { label: 'אני משתמש רגיל', value: 'USER' },
+        { label: 'אני מעסיק עובדים', value: 'MERCHANT' },
+      ]}
+    />
+  );
+
+  if (type === 'MERCHANT') {
+    return (
+      <>
+        {typeSwitch}
+        <Form1Merchant {...props} onSubmit={onSubmit} providers={providers} />
+      </>
+    );
+  } else {
+    return (
+      <>
+        {typeSwitch}
+        <Form1User {...props} onSubmit={onSubmit} />
+      </>
+    );
+  }
+}
+
+function Form1Merchant(props: any) {
+  const providers = props.providers as GetProvidersResponse200;
+
+  const form1 = useForm({
+    mode: 'uncontrolled',
+    initialValues: {
+      firstName: '',
+      providerFriendlyId: 'hapoalim',
+      branch: '',
+      bban: '',
+    },
+
+    validate: {
+      firstName: (value) => (value ? null : 'שדה חובה'),
+      providerFriendlyId: (value) => (value ? null : 'שדה חובה'),
+      branch: (value) => (value ? null : 'שדה חובה'),
+      bban: (value) => (value ? null : 'שדה חובה'),
+    },
+  });
+
+  const options = providers?.filter((provider) => !!provider.providerFriendlyId).map((provider) => ({ value: `${provider.providerFriendlyId}`, label: provider.nameNativeLanguage! }));
+
+  return (
+    <>
+      <Text size='xl'>
+        מושלם! בואו נכיר קצת יותר
+      </Text>
+      <form onSubmit={form1.onSubmit(props.onSubmit)}>
+        <TextInput
+          placeholder="שם עסק"
+          key={form1.key('firstName')}
+          miw={300}
+          mb='md'
+          {...form1.getInputProps('firstName')}
+        />
+        <Select
+          data={options}
+          mb='md'
+          {...form1.getInputProps('providerFriendlyId')}
+        />
+        <TextInput
+          placeholder="מספר סניף"
+          key={form1.key('branch')}
+          mb='md'
+          miw={300}
+          {...form1.getInputProps('branch')}
+        />
+        <TextInput
+          placeholder="מספר בנק"
+          key={form1.key('bban')}
+          miw={300}
+          mb='md'
+          {...form1.getInputProps('bban')}
+        />
+        <Group mt="md" w='100%'>
+          <Button fullWidth color='green' type="submit">המשך</Button>
+        </Group>
+      </form>
+    </>
+  );
+}
+
+function Form1User(props: any) {
   const today18YearsAgo = new Date();
   today18YearsAgo.setFullYear(today18YearsAgo.getFullYear() - 18);
   const form1 = useForm({

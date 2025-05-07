@@ -18,16 +18,43 @@ const userSchema = new Schema({
     },
     birthDate: {
         type: Date,
-        required: true
+        required: false,
     },
     firstName: {
         type: String,
-        required: true
+        required: true,
     },
     lastName: {
         type: String,
-        required: true
+        required: false,
     },
+    type: {
+        type: String,
+        enum: ['USER', 'MERCHANT'],
+        default: 'USER'
+    },
+    bankAccount: {
+        type: Object,
+        required: false,
+        properties: {
+            bankCode: {
+                type: String,
+                required: true
+            },
+            providerFriendlyId: {
+                type: String,
+                required: true
+            },
+            branch: {
+                type: String,
+                required: true
+            },
+            bban: {
+                type: String,
+                required: true
+            }
+        }
+    }
 });
 
 userSchema.pre('save', function (next) {

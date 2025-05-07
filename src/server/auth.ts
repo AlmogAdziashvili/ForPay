@@ -7,8 +7,17 @@ import { compare } from 'bcrypt';
 const authRouter = Router();
 
 authRouter.post('/register', async (req, res) => {
-  const { identificationNumber, password, birthDate, firstName, lastName } = req.body;
-  if (!identificationNumber || !password || !birthDate || !firstName || !lastName) {
+  const { identificationNumber, password, birthDate, firstName, lastName, type, providerFriendlyId, branch, bban, bankCode } = req.body;
+  if (!['USER', 'MERCHANT'].includes(type)) {
+    return res.sendStatus(400);
+  }
+
+  if (type === 'USER' && (!identificationNumber || !password || !birthDate || !firstName || !lastName)) {
+    logger.error('/register', 'Missing fields', { body: req.body });
+    return res.sendStatus(400);
+  }
+
+  if (type === 'MERCHANT' && (!bankCode || !providerFriendlyId || !branch || !bban || !firstName || !password || !identificationNumber)) {
     logger.error('/register', 'Missing fields', { body: req.body });
     return res.sendStatus(400);
   }
@@ -35,6 +44,13 @@ authRouter.post('/register', async (req, res) => {
     firstName,
     lastName,
     walletId: wallet._id,
+    type,
+    bankAccount: {
+      bankCode,
+      providerFriendlyId,
+      branch,
+      bban,
+    },
   });
 
   const userResult = await user.save();

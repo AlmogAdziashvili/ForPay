@@ -5,7 +5,8 @@ import dotenv from 'dotenv';
 import { logger } from './logger.js';
 import { authRouter } from './auth.js';
 import session from 'express-session';
-import { paymentsRouter } from './payments.js';
+import { getToken, paymentsRouter } from './payments.js';
+import openFinanceData from '@api/open-finance-data';
 
 dotenv.config();
 
@@ -36,6 +37,15 @@ const restrict: RequestHandler<{}, any, any, any, Record<string, any>> = (req, r
 };
 
 app.use('/auth', authRouter);
+app.get('/payments/providers', async (req, res) => {
+  const sdk = openFinanceData.default.auth(await getToken());
+  const providersResponse = await sdk.getProviders();
+  return res.json(
+    providersResponse.data
+      .filter((provider) => !!provider.bankCode)
+      .sort((a, b) => (a.sortIndex || 99) - (b.sortIndex || 99))
+  );
+});
 app.use('/payments', restrict, paymentsRouter);
 app.get('/', restrict)
 

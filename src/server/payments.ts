@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import openFinance from '@api/open-finance-auth';
-import openFinanceData from '@api/open-finance-data';
 import { logger } from './logger.js';
 import axios from 'axios';
 import Deposit from './models/deposit.js';
@@ -13,7 +12,7 @@ import Withdraw from './models/withdraw.js';
 let token: string | null = null;
 let tokenExpiration: number | null = null;
 
-async function getToken() {
+export async function getToken() {
   if (token && tokenExpiration && tokenExpiration > Date.now()) {
     return token;
   }
@@ -33,16 +32,6 @@ async function getToken() {
 
 const paymentsRouter = Router();
 
-paymentsRouter.get('/providers', async (req, res) => {
-  const sdk = openFinanceData.default.auth(await getToken());
-  const providersResponse = await sdk.getProviders();
-  return res.json(
-    providersResponse.data
-      .filter((provider) => !!provider.bankCode)
-      .sort((a, b) => (a.sortIndex || 99) - (b.sortIndex || 99))
-  );
-});
-
 paymentsRouter.post('/deposit', async (req, res) => {
   const { providerIdentifier, providerId, bban, amount, branch } = req.body;
   if (!req.session.user?.identificationNumber) {
@@ -58,7 +47,7 @@ paymentsRouter.post('/deposit', async (req, res) => {
     {
       providerId: providerIdentifier,
       psuId: req.session.user.identificationNumber.toString(),
-      redirectUrl: 'http://localhost:3000/transfer/callback',
+      redirectUrl: 'http://localhost:3000/payments/callback',
       paymentInformation: {
         amount,
         creditorAccountNumber: process.env.OF_CREDITOR_ACCOUNT_NUMBER!,
