@@ -73,8 +73,8 @@ function Form1(props: any) {
       value={type}
       onChange={(value) => setType(value as 'USER' | 'MERCHANT')}
       data={[
-        { label: 'אני משתמש רגיל', value: 'USER' },
-        { label: 'אני מעסיק עובדים', value: 'MERCHANT' },
+        { label: 'משתמש רגיל', value: 'USER' },
+        { label: 'חשבון עסקי', value: 'MERCHANT' },
       ]}
     />
   );

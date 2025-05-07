@@ -8,7 +8,7 @@ import { sendTelegramMessage } from './telegram.js';
 import user from './models/user.js';
 import Transfer from './models/transfer.js';
 import Withdraw from './models/withdraw.js';
-
+import Request from './models/requests.js';
 let token: string | null = null;
 let tokenExpiration: number | null = null;
 
@@ -218,4 +218,71 @@ paymentsRouter.post('/transfer', async (req, res) => {
   return res.sendStatus(200);
 });
 
+function generateCode() {
+  return Math.random().toString(36).substring(2, 6).toUpperCase();
+}
+
+paymentsRouter.post('/merchant/request', async (req, res) => {
+  const { amount } = req.body;
+  if (!amount || amount <= 0) {
+    return res.sendStatus(400);
+  }
+
+  const request = new Request({
+    amount,
+    code: generateCode(),
+    identificationNumber: req.session.user?.identificationNumber,
+  });
+
+  await request.save();
+
+  return res.json({ code: request.code });
+});
+
+paymentsRouter.post('/merchant/response', async (req, res) => {
+  const { code } = req.body;
+  if (!code) {
+    return res.sendStatus(400);
+  }
+
+  const request = await Request.findOne({ code });
+  if (!request) {
+    return res.sendStatus(404);
+  }
+
+  const { amount, identificationNumber } = request;
+
+  if (!req.session.user?.walletId || !amount || amount <= 0 || !identificationNumber || !(/^\d{9}$/).test(identificationNumber)) {
+    return res.sendStatus(400);
+  }
+
+  const wallet = await Wallet.findOne({ _id: req.session.user.walletId });
+  const recipient = await user.findOne({ identificationNumber });
+  const recipientWallet = await Wallet.findOne({ _id: recipient?.walletId });
+
+  if (!wallet || !recipient || !recipientWallet) {
+    return res.sendStatus(404);
+  }
+
+  if (amount > wallet.balance) {
+    return res.sendStatus(403);
+  }
+
+  const transfer = new Transfer({
+    amount,
+    senderId: req.session.user._id,
+    recipientId: recipient._id
+  });
+
+  wallet.balance -= amount;
+  recipientWallet.balance += amount;
+
+  await wallet.save();
+  await recipientWallet.save();
+  await transfer.save();
+
+  await request.deleteOne();
+
+  return res.sendStatus(200);
+});
 export { paymentsRouter };

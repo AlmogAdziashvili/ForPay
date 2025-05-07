@@ -10,6 +10,7 @@ import { ForPayContext } from './context';
 import { NavBar } from './navbar';
 import Withdraw from './withdraw';
 import Transfer from './transfer';
+import MerchantCode from './merchant_code';
 
 function Index() {
   const [user, setUser] = useState(null);
@@ -63,6 +64,7 @@ function Index() {
               <Route path='/deposit-list' element={<DepositList />} />
               <Route path='/deposit' element={<Deposit />} />
               <Route path='/withdraw' element={<Withdraw/>}/>
+              <Route path='/merchant-code' element={<MerchantCode/>}/>
               <Route path='*' element={<Hero />} />
             </Routes>
           ) : <Center><Loader /></Center>}

@@ -14,10 +14,10 @@ function actionToDescription (action: any) {
     return 'הפקדה לארנק';
   }
   if (action.type === 'TRANSFER_FROM_ME') {
-    return `העברת כסף ל${action.recipientId.firstName} ${action.recipientId.lastName}`;
+    return `העברת כסף ל${action.recipientId.firstName} ${action.recipientId.lastName || ''}`;
   }
   if (action.type === 'TRANSFER_TO_ME') {
-    return `העברת כסף מ${action.senderId.firstName} ${action.senderId.lastName}`;
+    return `העברת כסף מ${action.senderId.firstName} ${action.senderId.lastName || ''}`;
   }
   if (action.type === 'WITHDRAW') {
     return 'משיכת כסף מהארנק';

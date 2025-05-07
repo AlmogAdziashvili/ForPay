@@ -1,5 +1,5 @@
 import { Divider, Flex, Text } from "@mantine/core";
-import { IconCashBanknoteMove, IconCashPlus, IconHistory, IconLogout, IconHome, IconCashMinus } from "@tabler/icons-react";
+import { IconCashBanknoteMove, IconCashPlus, IconHistory, IconLogout, IconHome, IconCashMinus, IconBarcode } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 
 const navigationRoutes = [
@@ -7,6 +7,7 @@ const navigationRoutes = [
   { title: 'הפקדה', icon: IconCashPlus, to: '/deposit' },
   { title: 'משיכה', icon: IconCashMinus, to: '/withdraw' },
   { title: 'העברה', icon: IconCashBanknoteMove, to: '/transfer' },
+  { title: 'תשלום עם קוד', icon: IconBarcode, to: '/merchant-code' },
   { title: 'היסטוריית פעולות', icon: IconHistory, to: '/deposit-list' },
   { title: 'התנתק', icon: IconLogout, to: '/auth/logout', bottom: true },
 ];

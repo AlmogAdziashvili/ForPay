@@ -72,3 +72,8 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.bigInput input {
+  font-size: 3rem;
+  height: 3rem;
+}
