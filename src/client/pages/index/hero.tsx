@@ -5,6 +5,7 @@ import { IconBarcode, IconCashBanknoteMove, IconCashMinus, IconCashPlus, IconInf
 import { useNavigate } from "react-router";
 import { notifications } from '@mantine/notifications';
 import DepositList from "./deposit_list";
+import { navigationRoutes } from "./navbar";
 
 function EmptyWalletAlert() {
   const navigate = useNavigate();
@@ -18,8 +19,10 @@ function EmptyWalletAlert() {
   );
 }
 
+const heroNavItems = navigationRoutes.filter((item) => item.showOnHero);
+
 function Hero() {
-  const { wallets } = useContext(ForPayContext);
+  const { wallets, user } = useContext(ForPayContext);
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   let didNotificationShow = false;
@@ -68,30 +71,22 @@ function Hero() {
         {!wallets?.[0].balance && <EmptyWalletAlert />}
       </Flex>
       <Flex py='lg' gap='lg' justify='center'>
-        <Flex direction='column' align='center'>
-          <ActionIcon gradient={{ from: 'lime', to: 'teal' }} variant="gradient" size="64" radius="xl" onClick={() => navigate('/deposit')}>
-            <IconCashPlus />
-          </ActionIcon>
-          <Text size='xs'>הפקדה</Text>
-        </Flex>
-        <Flex direction='column' align='center'>
-          <ActionIcon gradient={{ from: 'green', to: 'cyan' }} variant="gradient" size="64" radius="xl" onClick={() => navigate('/transfer')}>
-            <IconCashBanknoteMove />
-          </ActionIcon>
-          <Text size='xs'>העברה</Text>
-        </Flex>
-        <Flex direction='column' align='center'>
-          <ActionIcon gradient={{ from: 'teal', to: 'green' }} variant="gradient" size="64" radius="xl" onClick={() => navigate('/withdraw')}>
-            <IconCashMinus />
-          </ActionIcon>
-          <Text size='xs'>משיכה</Text>
-        </Flex>
-        <Flex direction='column' align='center'>
-          <ActionIcon gradient={{ from: 'cyan', to: 'lime' }} variant="gradient" size="64" radius="xl" onClick={() => navigate('/merchant-code')}>
-            <IconBarcode />
-          </ActionIcon>
-          <Text size='xs'>תשלום עם קוד</Text>
-        </Flex>
+        {heroNavItems.map((item, i) => {
+          if (item.hideInBusiness && user.type === 'MERCHANT') {
+            return null;
+          }
+          if (item.hideInUser && user.type === 'USER') {
+            return null;
+          }
+          return (
+            <Flex key={i} direction='column' align='center'>
+              <ActionIcon gradient={{ from: 'lime', to: 'teal' }} variant="gradient" size="64" radius="xl" onClick={() => navigate(item.to)}>
+                <item.icon />
+              </ActionIcon>
+              <Text size='xs'>{item.title}</Text>
+            </Flex>
+          );
+        })}
       </Flex>
       <Flex justify='space-between' align='center'>
         <Text size='md'>פעולות אחרונות</Text>

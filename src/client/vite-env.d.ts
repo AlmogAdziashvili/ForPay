@@ -12,6 +12,7 @@ declare module 'express-session' {
       birthDate: NativeDate;
       walletId: Types.ObjectId;
       password: string;
+      type: 'USER' | 'MERCHANT';
     };
   }
 }

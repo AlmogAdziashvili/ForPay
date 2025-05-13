@@ -99,8 +99,8 @@ authRouter.get('/me', async (req, res) => {
   if (!req.session.user) {
     return res.sendStatus(401);
   }
-  const { firstName, lastName, identificationNumber, birthDate, walletId } = req.session.user;
-  const publicUser = { firstName, lastName, identificationNumber, birthDate, walletId };
+  const { firstName, lastName, identificationNumber, birthDate, walletId, type } = req.session.user;
+  const publicUser = { firstName, lastName, identificationNumber, birthDate, walletId, type };
 
   const wallet = await Wallet.findById(walletId);
   if (!wallet) {
