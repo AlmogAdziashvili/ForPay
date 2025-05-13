@@ -49,6 +49,6 @@ app.get('/payments/providers', async (req, res) => {
 app.use('/payments', restrict, paymentsRouter);
 app.get('/', restrict)
 
-ViteExpress.listen(app, 3000, () =>
+ViteExpress.listen(app, Number(process.env.PORT) || 3000, () =>
   logger.info('Server listening on http://localhost:3000')
 );
