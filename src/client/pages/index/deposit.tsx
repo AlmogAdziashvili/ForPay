@@ -1,8 +1,9 @@
-import { Button, Group, SimpleGrid, Stack, Text, TextInput, Center, Loader } from "@mantine/core";
+import { Button, Group, Stack, Text, TextInput, Center, Loader } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useEffect, useState } from "react";
 import { GetProvidersResponse200 } from "@api/open-finance-data";
 import axios from "axios";
+import { ProvidersList } from "../../components/providers_list";
 
 function Deposit() {
   const [isLoading, setIsLoading] = useState(false);
@@ -31,9 +32,9 @@ function Deposit() {
     },
   });
 
-  const pickProvider = (provider: number, providerIdentifier: string) => () => {
-    form.setFieldValue('providerId', provider);
-    form.setFieldValue('providerIdentifier', providerIdentifier);
+  const handleSelectProvider = (bankCode: number, providerFriendlyId: string) => {
+    form.setFieldValue('providerId', bankCode);
+    form.setFieldValue('providerIdentifier', providerFriendlyId);
   };
 
   const onSubmit = async (values: ReturnType<typeof form.getValues>) => {
@@ -85,14 +86,11 @@ function Deposit() {
         />
 
         <Text size='sm' mb='md'>בחר בנק</Text>
-        <SimpleGrid cols={3} spacing='sm'>
-          {providers.map((provider) => {
-            const maybeSelectedStyles = form.getValues().providerIdentifier === provider.providerFriendlyId ? { border: '2px solid var(--mantine-color-green-outline)', padding: 2 } : {};
-            return (
-              <img key={provider.providerFriendlyId} onClick={pickProvider(provider.bankCode!, provider.providerFriendlyId!)} height={60} width={60} src={provider.image} style={{ borderRadius: '50%', objectFit: 'contain', background: '#fff', scale: 0.8, ...maybeSelectedStyles }} />
-            );
-          })}
-        </SimpleGrid>
+        <ProvidersList 
+          providers={providers}
+          selectedProviderId={form.getValues().providerIdentifier}
+          onSelectProvider={handleSelectProvider}
+        />
 
         <Group mt="md" w='100%'>
           <Button fullWidth color='green' type="submit" loading={isLoading}>עבור לאישור הפקדה</Button>
