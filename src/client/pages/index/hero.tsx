@@ -61,7 +61,7 @@ function Hero() {
   }, []);
 
   return (
-    <Stack justify='center' p='xl' gap='xs'>
+    <Stack justify='center' gap='xs'>
       <Flex justify='center' align='center' gap='xs' direction='column'>
         <Text size='md'>היתרה שלך</Text>
         <Flex align='end'>
@@ -80,10 +80,10 @@ function Hero() {
           }
           return (
             <Flex key={i} direction='column' align='center'>
-              <ActionIcon gradient={{ from: 'lime', to: 'teal' }} variant="gradient" size="64" radius="xl" onClick={() => navigate(item.to)}>
+              <ActionIcon gradient={{ from: 'lime', to: 'teal' }} variant="gradient" size={52} radius="xl" onClick={() => navigate(item.to)}>
                 <item.icon />
               </ActionIcon>
-              <Text size='xs'>{item.title}</Text>
+              <Text size='xs' ta='center'>{item.title}</Text>
             </Flex>
           );
         })}

@@ -54,7 +54,7 @@ function Deposit() {
   }
 
   return (
-    <Stack align='center' justify='center' p='xl' gap='xs'>
+    <Stack align='center' justify='center' gap='xs'>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
           type='number'
@@ -89,7 +89,7 @@ function Deposit() {
           {providers.map((provider) => {
             const maybeSelectedStyles = form.getValues().providerIdentifier === provider.providerFriendlyId ? { border: '2px solid var(--mantine-color-green-outline)', padding: 2 } : {};
             return (
-              <img key={provider.providerFriendlyId} onClick={pickProvider(provider.bankCode!, provider.providerFriendlyId!)} height={90} width={90} src={provider.image} style={{ borderRadius: '50%', objectFit: 'contain', background: '#fff', scale: 0.8, ...maybeSelectedStyles }} />
+              <img key={provider.providerFriendlyId} onClick={pickProvider(provider.bankCode!, provider.providerFriendlyId!)} height={60} width={60} src={provider.image} style={{ borderRadius: '50%', objectFit: 'contain', background: '#fff', scale: 0.8, ...maybeSelectedStyles }} />
             );
           })}
         </SimpleGrid>

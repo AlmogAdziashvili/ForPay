@@ -65,7 +65,7 @@ function Transfer() {
   }
 
   return (
-    <Stack align='center' justify='center' p='xl' gap='xs'>
+    <Stack align='center' justify='center' gap='xs'>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <NumberInput
           placeholder="סכום"

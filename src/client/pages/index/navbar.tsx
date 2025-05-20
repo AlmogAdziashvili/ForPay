@@ -10,7 +10,7 @@ export const navigationRoutes = [
   { title: 'משיכה', icon: IconCashMinus, to: '/withdraw', showOnHero: true },
   { title: 'העברה', icon: IconCashBanknoteMove, to: '/transfer', hideInBusiness: true, showOnHero: true },
   { title: 'תשלום עם קוד', icon: IconBarcode, to: '/merchant-code', hideInBusiness: true, showOnHero: true },
-  { title: 'בקשת תשלום', icon: IconBarcode, to: '/merchant-request', showOnHero: true, hideInUser: true },
+  { title: 'בקשת תשלום', icon: IconBarcode, to: '/merchant-payment', showOnHero: true, hideInUser: true },
   { title: 'היסטוריית פעולות', icon: IconHistory, to: '/deposit-list' },
   { title: 'התנתק', icon: IconLogout, to: '/auth/logout', bottom: true },
 ];
