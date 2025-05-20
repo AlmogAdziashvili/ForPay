@@ -36,7 +36,6 @@ body,
 #root {
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 100vw;
   direction: rtl;
 }
