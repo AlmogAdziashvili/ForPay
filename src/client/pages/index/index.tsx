@@ -42,7 +42,7 @@ function Index() {
           collapsed: { mobile: !opened },
         }}
       >
-        <AppShell.Header p='8' bg='var(--mantine-color-blue-light)'>
+        <AppShell.Header p='8' bg='var(--mantine-primary-color-1)'>
           <Flex justify='space-between'>
             <Burger
               opened={opened}

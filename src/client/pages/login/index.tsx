@@ -33,7 +33,7 @@ function Login() {
   };
 
   return (
-    <Container bg="var(--mantine-color-blue-light)" style={{ minHeight: '100vh', minWidth: '100vw' }}>
+    <Container bg="var(--mantine-color-blue-light)" style={{ minHeight: '100%', minWidth: '100vw' }}>
       <Stack align='center' mt='30vh'>
         <Image src='/logo.png' alt='Mantine logo' maw={200} />
         <form onSubmit={form.onSubmit(onSubmit)}>
