@@ -1,5 +1,6 @@
 import { SimpleGrid, Stack, Text } from "@mantine/core";
 import { GetProvidersResponse200 } from "@api/open-finance-data";
+import { useTranslation } from "react-i18next";
 
 interface ProvidersListProps {
   providers: GetProvidersResponse200;
@@ -12,6 +13,7 @@ export function ProvidersList({
   selectedProviderId, 
   onSelectProvider
 }: ProvidersListProps) {
+  const { t } = useTranslation();
   return (
     <SimpleGrid cols={3} spacing="md">
       {providers.map((provider) => {
@@ -47,7 +49,7 @@ export function ProvidersList({
               }}
             />
             <Text size="sm" ta="center" c={isSelected ? "blue" : "black"}>
-              {provider.nameNativeLanguage}
+              {t(provider.providerFriendlyId!)}
             </Text>
           </Stack>
         );

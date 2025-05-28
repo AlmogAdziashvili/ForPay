@@ -1,5 +1,6 @@
 import { Text, Stack, Card, Flex, Title, Center, Loader } from "@mantine/core";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const formatDate = (timestamp: string) => {
   const date = new Date(timestamp ?? Date.now());
@@ -9,23 +10,24 @@ const formatDate = (timestamp: string) => {
 interface DepositListProps {
   limit?: number;
 }
-function actionToDescription (action: any) {
+function actionToDescription (action: any, t: any) {
   if (action.type === 'DEPOSIT') {
-    return 'הפקדה לארנק';
+    return t('deposit_list_deposit_to_wallet');
   }
   if (action.type === 'TRANSFER_FROM_ME') {
-    return `העברת כסף ל${action.recipientId.firstName} ${action.recipientId.lastName || ''}`;
+    return t('deposit_list_transfer_from_me', { recipientName: `${action.recipientId.firstName} ${action.recipientId.lastName || ''}` });
   }
   if (action.type === 'TRANSFER_TO_ME') {
-    return `העברת כסף מ${action.senderId.firstName} ${action.senderId.lastName || ''}`;
+    return t('deposit_list_transfer_to_me', { senderName: `${action.senderId.firstName} ${action.senderId.lastName || ''}` });
   }
   if (action.type === 'WITHDRAW') {
-    return 'משיכת כסף מהארנק';
+    return t('deposit_list_withdraw_from_wallet');
   }
   return '';
 }
 
 function DepositList(props: DepositListProps) {
+  const { t } = useTranslation();
   const [actions, setActions] = useState<any[] | null>(null);
 
   useEffect(() => {
@@ -46,7 +48,7 @@ function DepositList(props: DepositListProps) {
             <Stack gap="2">
               <Text size="sm" c="gray">{formatDate(action.createdAt)}</Text>
               <Text size="md">
-                {actionToDescription(action)}
+                {actionToDescription(action, t)}
               </Text>
             </Stack>
             <Flex align="end">

@@ -5,8 +5,10 @@ import { GetProvidersResponse200 } from "@api/open-finance-data";
 import axios from "axios";
 import { ForPayContext } from "./context";
 import { useNavigate } from "react-router";
+import { useTranslation } from "react-i18next";
 
 function Transfer() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const [providers, setProviders] = useState<GetProvidersResponse200>([]);
@@ -18,10 +20,10 @@ function Transfer() {
 
   function validateAmount(value: number) {
     if (!value || value <= 0) {
-      return 'סכום חייב להיות גדול מ-0';
+      return t('deposit_amount_validation');
     }
     if (wallets && value > wallets[0].balance) {
-      return 'אין לך מספיק כסף בחשבון';
+      return t('transfer_insufficient_funds_validation');
     }
     return null;
   }
@@ -35,7 +37,7 @@ function Transfer() {
 
     validate: {
       amount: validateAmount,
-      identificationNumber: (value) => (/^\d{9}$/).test(value) ? null : 'מספר תעודת זהות חייב להיות בעל 9 ספרות',
+      identificationNumber: (value) => (/^\d{9}$/).test(value) ? null : t('login_id_validation'),
     },
   });
 
@@ -47,13 +49,13 @@ function Transfer() {
       navigate('/?transfer=success');
     } catch (error: any) {
       if (error.response.status === 400) {
-        form.setErrors({ amount: 'אחד או יותר מהשדות שגויים' });
+        form.setErrors({ amount: t('transfer_invalid_fields_error') });
       } else if (error.response.status === 404) {
-        form.setErrors({ amount: 'לא נמצא חשבון' });
+        form.setErrors({ amount: t('transfer_account_not_found_error') });
       } else if (error.response.status === 403) {
-        form.setErrors({ amount: 'אין לך מספיק כסף בחשבון' });
+        form.setErrors({ amount: t('transfer_insufficient_funds_validation') });
       } else {
-        form.setErrors({ amount: 'שגיאה בעת ביצוע ההעברה' });
+        form.setErrors({ amount: t('transfer_error') });
       }
     } finally {
       setIsLoading(false);
@@ -68,8 +70,8 @@ function Transfer() {
     <Stack align='center' justify='center' gap='xs'>
       <form onSubmit={form.onSubmit(onSubmit)}>
         <NumberInput
-          placeholder="סכום"
-          label="סכום"
+          placeholder={t('deposit_amount_placeholder')}
+          label={t('deposit_amount_label')}
           key={form.key('amount')}
           miw={300}
           mb='md'
@@ -77,8 +79,8 @@ function Transfer() {
         />
 
         <TextInput
-          placeholder="תעודת זהות"
-          label="למי מעבירים?"
+          placeholder={t('login_id_placeholder')}
+          label={t('transfer_to_whom_label')}
           key={form.key('identificationNumber')}
           miw={300}
           mb='md'
@@ -86,7 +88,7 @@ function Transfer() {
         />
 
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit" loading={isLoading}>אשר העברה</Button>
+          <Button fullWidth color='green' type="submit" loading={isLoading}>{t('transfer_submit_button')}</Button>
         </Group>
       </form>
     </Stack>

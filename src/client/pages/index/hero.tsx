@@ -5,27 +5,30 @@ import { IconBarcode, IconCashBanknoteMove, IconCashMinus, IconCashPlus, IconInf
 import { useNavigate } from "react-router";
 import { notifications } from '@mantine/notifications';
 import DepositList from "./deposit_list";
-import { navigationRoutes } from "./navbar";
+import { getNavigationRoutes } from "./navbar";
+import { useTranslation } from "react-i18next";
 
 function EmptyWalletAlert() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const icon = <IconInfoCircle />;
 
   return (
     <Alert variant="light" color="yellow" icon={icon} onClick={() => navigate('/deposit')}>
-      שמנו לב שעוד לא הפקדת כסף לחשבון שלך, לחץ כאן כדי להפקיד עכשיו
+      {t('hero_empty_wallet_alert')}
     </Alert>
   );
 }
 
-const heroNavItems = navigationRoutes.filter((item) => item.showOnHero);
-
 function Hero() {
+  const { t } = useTranslation();
   const { wallets, user } = useContext(ForPayContext);
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(window.location.search);
   let didNotificationShow = false;
+  const heroNavItems = getNavigationRoutes(t)
+    .filter(item => typeof item !== 'string' && item.showOnHero);
 
   useEffect(() => {
     const isDepositSuccess = queryParams.get('deposit') === 'success';
@@ -35,8 +38,8 @@ function Hero() {
     if (isDepositSuccess && !didNotificationShow) {
       didNotificationShow = true;
       notifications.show({
-        title: 'הפקדה בוצעה בהצלחה',
-        message: 'הפקדת כסף לחשבון שלך בהצלחה',
+        title: t('hero_deposit_success_title'),
+        message: t('hero_deposit_success_message'),
         color: 'teal',
       });
     }
@@ -44,8 +47,8 @@ function Hero() {
     if (isTransferSuccess && !didNotificationShow) {
       didNotificationShow = true;
       notifications.show({
-        title: 'העברה בוצעה בהצלחה',
-        message: 'ביצעת העברה בהצלחה',
+        title: t('hero_transfer_success_title'),
+        message: t('hero_transfer_success_message'),
         color: 'teal',
       });
     }
@@ -53,8 +56,8 @@ function Hero() {
     if (isWithdrawSuccess && !didNotificationShow) {
       didNotificationShow = true;
       notifications.show({
-        title: 'משיכת כסף בוצעה בהצלחה',
-        message: 'משיכת כסף מהחשבון שלך בוצעה בהצלחה',
+        title: t('hero_withdraw_success_title'),
+        message: t('hero_withdraw_success_message'),
         color: 'teal',
       });
     }
@@ -63,7 +66,7 @@ function Hero() {
   return (
     <Stack justify='center' gap='xs'>
       <Flex justify='center' align='center' gap='xs' direction='column'>
-        <Text size='md'>היתרה שלך</Text>
+        <Text size='md'>{t('hero_your_balance')}</Text>
         <Flex align='end'>
           <Title size='64'>{wallets?.[0].balance}</Title>
           <Text size='md' pb='10' pr='2'>₪</Text>
@@ -72,6 +75,7 @@ function Hero() {
       </Flex>
       <Flex py='lg' gap='lg' justify='center'>
         {heroNavItems.map((item, i) => {
+          if (typeof item === 'string') return null;
           if (item.hideInBusiness && user.type === 'MERCHANT') {
             return null;
           }
@@ -89,8 +93,8 @@ function Hero() {
         })}
       </Flex>
       <Flex justify='space-between' align='center'>
-        <Text size='md'>פעולות אחרונות</Text>
-        <Button color='green' variant='transparent' size='xs' onClick={() => navigate('/deposit-list')}>צפה בכל הפעולות</Button>
+        <Text size='md'>{t('hero_recent_actions')}</Text>
+        <Button color='green' variant='transparent' size='xs' onClick={() => navigate('/deposit-list')}>{t('hero_view_all_actions_button')}</Button>
       </Flex>
       <DepositList limit={2} />
     </Stack>

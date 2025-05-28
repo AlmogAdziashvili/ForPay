@@ -1,10 +1,13 @@
-import { Button, Container, Group, Image, Stack, Text, TextInput } from '@mantine/core';
+import { Button, Container, Flex, Group, Image, Stack, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 function Login() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -16,8 +19,8 @@ function Login() {
     },
 
     validate: {
-      identificationNumber: (value) => (/^\d{9}$/).test(value) ? null : 'מספר תעודת זהות חייב להיות בעל 9 ספרות',
-      password: (value) => (value ? null : 'שדה חובה'),
+      identificationNumber: (value) => (/^\d{9}$/).test(value) ? null : t('login_id_validation'),
+      password: (value) => (value ? null : t('login_required_field')),
     },
   });
 
@@ -28,7 +31,7 @@ function Login() {
       navigate('/');
     } catch (error) {
       setIsLoading(false);
-      form.setErrors({ password: 'סיסמא או תעודת זהות שגויים' });
+      form.setErrors({ password: t('login_incorrect_credentials') });
     }
   };
 
@@ -39,7 +42,7 @@ function Login() {
         <form onSubmit={form.onSubmit(onSubmit)}>
           <TextInput
             type='number'
-            placeholder="תעודת זהות"
+            placeholder={t('login_id_placeholder')}
             key={form.key('identificationNumber')}
             miw={300}
             mb='md'
@@ -47,7 +50,7 @@ function Login() {
           />
 
           <TextInput
-            placeholder="סיסמא"
+            placeholder={t('login_password_placeholder')}
             type='password'
             key={form.key('password')}
             miw={300}
@@ -56,11 +59,14 @@ function Login() {
           />
 
           <Group mt="md" w='100%'>
-            <Button fullWidth color='green' type="submit" loading={isLoading}>כניסה</Button>
-            <Button fullWidth variant='subtle' color='green' onClick={() => navigate('/register')}>פתח ארנק חדש</Button>
+            <Button fullWidth color='green' type="submit" loading={isLoading}>{t('login_submit_button')}</Button>
+            <Button fullWidth variant='subtle' color='green' onClick={() => navigate('/register')}>{t('login_register_button')}</Button>
           </Group>
         </form>
       </Stack>
+      <Flex justify='center' pos="fixed" bottom={0} w='100%' p='md' right={0} left={0}>
+        <LanguageSwitcher />
+      </Flex>
     </Container>
   );
 }

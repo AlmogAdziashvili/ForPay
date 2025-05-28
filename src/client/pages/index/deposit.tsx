@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { GetProvidersResponse200 } from "@api/open-finance-data";
 import axios from "axios";
 import { ProvidersList } from "../../components/providers_list";
+import { useTranslation } from "react-i18next";
 
 function Deposit() {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [providers, setProviders] = useState<GetProvidersResponse200>([]);
 
@@ -24,11 +26,11 @@ function Deposit() {
     },
 
     validate: {
-      amount: (value) => ((value && value > 0) ? null : 'סכום חייב להיות גדול מ-0'),
-      branch: (value) => (value ? null : 'שדה חובה'),
-      bban: (value) => (value ? null : 'שדה חובה'),
-      providerId: (value) => (value ? null : 'שדה חובה'),
-      providerIdentifier: (value) => (value ? null : 'שדה חובה'),
+      amount: (value) => ((value && value > 0) ? null : t('deposit_amount_validation')),
+      branch: (value) => (value ? null : t('common_required_field')),
+      bban: (value) => (value ? null : t('common_required_field')),
+      providerId: (value) => (value ? null : t('common_required_field')),
+      providerIdentifier: (value) => (value ? null : t('common_required_field')),
     },
   });
 
@@ -59,8 +61,8 @@ function Deposit() {
       <form onSubmit={form.onSubmit(onSubmit)}>
         <TextInput
           type='number'
-          placeholder="סכום"
-          label="סכום"
+          placeholder={t('deposit_amount_placeholder')}
+          label={t('deposit_amount_label')}
           key={form.key('amount')}
           miw={300}
           mb='md'
@@ -68,8 +70,8 @@ function Deposit() {
         />
 
         <TextInput
-          placeholder="סניף"
-          label="סניף"
+          placeholder={t('deposit_branch_placeholder')}
+          label={t('deposit_branch_label')}
           key={form.key('branch')}
           miw={300}
           mb='md'
@@ -77,15 +79,15 @@ function Deposit() {
         />
 
         <TextInput
-          placeholder="מספר חשבון"
-          label="מספר חשבון"
+          placeholder={t('deposit_account_placeholder')}
+          label={t('deposit_account_label')}
           key={form.key('bban')}
           miw={300}
           mb='md'
           {...form.getInputProps('bban')}
         />
 
-        <Text size='sm' mb='md'>בחר בנק</Text>
+        <Text size='sm' mb='md'>{t('deposit_select_bank')}</Text>
         <ProvidersList 
           providers={providers}
           selectedProviderId={form.getValues().providerIdentifier}
@@ -93,7 +95,7 @@ function Deposit() {
         />
 
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit" loading={isLoading}>עבור לאישור הפקדה</Button>
+          <Button fullWidth color='green' type="submit" loading={isLoading}>{t('deposit_submit_button')}</Button>
         </Group>
       </form>
     </Stack>

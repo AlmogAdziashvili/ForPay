@@ -4,8 +4,10 @@ import { useContext, useState, useRef, useEffect } from "react";
 import { ForPayContext } from "./context";
 import { useNavigate } from "react-router";
 import { notifications } from '@mantine/notifications';
+import { useTranslation } from "react-i18next";
 
 function MerchantCode() {
+  const { t } = useTranslation();
   const [code, setCode] = useState('');
   const { reload } = useContext(ForPayContext);
   const navigate = useNavigate();
@@ -33,8 +35,8 @@ function MerchantCode() {
       navigate('/?transfer=success');
     } catch (error: any) {
       notifications.show({
-        title: 'שגיאה',
-        message: 'קוד לא תקין',
+        title: t('merchant_code_error_title'),
+        message: t('merchant_code_invalid_code_error'),
         color: 'red',
       });
     } finally {
@@ -52,7 +54,7 @@ function MerchantCode() {
             fz="xl" 
             c="dimmed"
           >
-            הזן קוד תשלום
+            {t('merchant_code_enter_payment_code')}
           </Text>
           
           <Box 
@@ -124,7 +126,7 @@ function MerchantCode() {
               transform: isLoading ? 'scale(0.98)' : '',
             }}
           >
-            {isLoading ? <Loader size="sm" /> : 'אישור תשלום'}
+            {isLoading ? <Loader size="sm" /> : t('merchant_code_submit_button')}
           </Button>
         </Stack>
       </Card>

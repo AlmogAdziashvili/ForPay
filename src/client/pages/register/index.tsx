@@ -1,12 +1,15 @@
-import { Button, Checkbox, Container, Grid, Group, Image, SegmentedControl, Select, SimpleGrid, Stack, Stepper, Switch, Text, TextInput } from '@mantine/core';
+import { Button, Checkbox, Container, Flex, Grid, Group, Image, SegmentedControl, Select, SimpleGrid, Stack, Stepper, Switch, Text, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useEffect, useState } from 'react';
 import { DatePickerInput } from '@mantine/dates';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { GetProvidersResponse200 } from '@api/open-finance-data';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 function Form0(props: any) {
+  const { t } = useTranslation();
   const form1 = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -15,33 +18,33 @@ function Form0(props: any) {
     },
 
     validate: {
-      identificationNumber: (value) => (/^[0-9]{9}$/.test(value) ? null : 'תעדות זהות לא תקינה'),
-      termsOfService: (value) => (value ? null : 'אנא אשר את תנאי השימוש'),
+      identificationNumber: (value) => (/^[0-9]{9}$/.test(value) ? null : t('register_form0_id_validation')),
+      termsOfService: (value) => (value ? null : t('register_form0_terms_validation')),
     },
   });
 
   return (
     <>
       <Text size='xl'>
-        בואו נתחיל!
+        {t('register_form0_title')}
       </Text>
       <form onSubmit={form1.onSubmit(props.onSubmit)}>
         <TextInput
           type='number'
-          placeholder="תעודת זהות"
+          placeholder={t('register_form0_id_placeholder')}
           key={form1.key('identificationNumber')}
           miw={300}
           {...form1.getInputProps('identificationNumber')}
         />
         <Checkbox
           mt="md"
-          label="אני מסכים לתנאי השימוש"
+          label={t('register_form0_terms_label')}
           key={form1.key('termsOfService')}
           {...form1.getInputProps('termsOfService', { type: 'checkbox' })}
         />
 
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit">המשך</Button>
+          <Button fullWidth color='green' type="submit">{t('common_continue_button')}</Button>
         </Group>
       </form>
     </>
@@ -49,6 +52,7 @@ function Form0(props: any) {
 }
 
 function Form1(props: any) {
+  const { t } = useTranslation();
   const [type, setType] = useState<'USER' | 'MERCHANT'>('USER');
   const onSubmit = (values: any) => {
     if (type === 'MERCHANT') {
@@ -73,8 +77,8 @@ function Form1(props: any) {
       value={type}
       onChange={(value) => setType(value as 'USER' | 'MERCHANT')}
       data={[
-        { label: 'משתמש רגיל', value: 'USER' },
-        { label: 'חשבון עסקי', value: 'MERCHANT' },
+        { label: t('register_form1_user_type_normal'), value: 'USER' },
+        { label: t('register_form1_user_type_business'), value: 'MERCHANT' },
       ]}
     />
   );
@@ -97,6 +101,7 @@ function Form1(props: any) {
 }
 
 function Form1Merchant(props: any) {
+  const { t } = useTranslation();
   const providers = props.providers as GetProvidersResponse200;
 
   const form1 = useForm({
@@ -109,23 +114,23 @@ function Form1Merchant(props: any) {
     },
 
     validate: {
-      firstName: (value) => (value ? null : 'שדה חובה'),
-      providerFriendlyId: (value) => (value ? null : 'שדה חובה'),
-      branch: (value) => (value ? null : 'שדה חובה'),
-      bban: (value) => (value ? null : 'שדה חובה'),
+      firstName: (value) => (value ? null : t('common_required_field')),
+      providerFriendlyId: (value) => (value ? null : t('common_required_field')),
+      branch: (value) => (value ? null : t('common_required_field')),
+      bban: (value) => (value ? null : t('common_required_field')),
     },
   });
 
-  const options = providers?.filter((provider) => !!provider.providerFriendlyId).map((provider) => ({ value: `${provider.providerFriendlyId}`, label: provider.nameNativeLanguage! }));
+  const options = providers?.filter((provider) => !!provider.providerFriendlyId).map((provider) => ({ value: `${provider.providerFriendlyId}`, label: t(provider.providerFriendlyId!) }));
 
   return (
     <>
       <Text size='xl'>
-        מושלם! בואו נכיר קצת יותר
+        {t('register_form1_title')}
       </Text>
       <form onSubmit={form1.onSubmit(props.onSubmit)}>
         <TextInput
-          placeholder="שם עסק"
+          placeholder={t('register_form1_merchant_name_placeholder')}
           key={form1.key('firstName')}
           miw={300}
           mb='md'
@@ -137,21 +142,21 @@ function Form1Merchant(props: any) {
           {...form1.getInputProps('providerFriendlyId')}
         />
         <TextInput
-          placeholder="מספר סניף"
+          placeholder={t('register_form1_merchant_branch_placeholder')}
           key={form1.key('branch')}
           mb='md'
           miw={300}
           {...form1.getInputProps('branch')}
         />
         <TextInput
-          placeholder="מספר בנק"
+          placeholder={t('register_form1_merchant_bank_placeholder')}
           key={form1.key('bban')}
           miw={300}
           mb='md'
           {...form1.getInputProps('bban')}
         />
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit">המשך</Button>
+          <Button fullWidth color='green' type="submit">{t('common_continue_button')}</Button>
         </Group>
       </form>
     </>
@@ -159,6 +164,7 @@ function Form1Merchant(props: any) {
 }
 
 function Form1User(props: any) {
+  const { t } = useTranslation();
   const today18YearsAgo = new Date();
   today18YearsAgo.setFullYear(today18YearsAgo.getFullYear() - 18);
   const form1 = useForm({
@@ -170,20 +176,20 @@ function Form1User(props: any) {
     },
 
     validate: {
-      firstName: (value) => (value ? null : 'שדה חובה'),
-      lastName: (value) => (value ? null : 'שדה חובה'),
-      birthDate: (value) => (value ? null : 'שדה חובה'),
+      firstName: (value) => (value ? null : t('common_required_field')),
+      lastName: (value) => (value ? null : t('common_required_field')),
+      birthDate: (value) => (value ? null : t('common_required_field')),
     },
   });
 
   return (
     <>
       <Text size='xl'>
-        מושלם! בואו נכיר קצת יותר
+        {t('register_form1_title')}
       </Text>
       <form onSubmit={form1.onSubmit(props.onSubmit)}>
         <TextInput
-          placeholder="שם פרטי"
+          placeholder={t('register_form1_user_firstname_placeholder')}
           key={form1.key('firstName')}
           miw={300}
           mb='md'
@@ -191,7 +197,7 @@ function Form1User(props: any) {
         />
 
         <TextInput
-          placeholder="שם משפחה"
+          placeholder={t('register_form1_user_lastname_placeholder')}
           key={form1.key('lastName')}
           miw={300}
           mb='md'
@@ -199,7 +205,7 @@ function Form1User(props: any) {
         />
 
         <DatePickerInput
-          placeholder="תאריך לידה"
+          placeholder={t('register_form1_user_birthdate_placeholder')}
           key={form1.key('birthDate')}
           miw={300}
           mb='md'
@@ -209,7 +215,7 @@ function Form1User(props: any) {
         />
 
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit">המשך</Button>
+          <Button fullWidth color='green' type="submit">{t('common_continue_button')}</Button>
         </Group>
       </form>
     </>
@@ -217,6 +223,7 @@ function Form1User(props: any) {
 }
 
 function Form2(props: any) {
+  const { t } = useTranslation();
   const form2 = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -225,19 +232,19 @@ function Form2(props: any) {
     },
 
     validate: {
-      password: (value) => (value ? null : 'שדה חובה'),
-      confirmPassword: (value, { password }) => ((value == password) ? null : 'הסיסמאות אינן תואמות'),
+      password: (value) => (value ? null : t('common_required_field')),
+      confirmPassword: (value, { password }) => ((value == password) ? null : t('register_form2_passwords_no_match')),
     },
   });
 
   return (
     <>
       <Text size='xl'>
-        נשאר רק צעד אחד!
+        {t('register_form2_title')}
       </Text>
       <form onSubmit={form2.onSubmit(props.onSubmit)}>
         <TextInput
-          placeholder="סיסמא"
+          placeholder={t('register_form2_password_placeholder')}
           type='password'
           key={form2.key('password')}
           miw={300}
@@ -246,7 +253,7 @@ function Form2(props: any) {
         />
 
         <TextInput
-          placeholder="אימות סיסמא"
+          placeholder={t('register_form2_confirm_password_placeholder')}
           type='password'
           key={form2.key('confirmPassword')}
           miw={300}
@@ -255,7 +262,7 @@ function Form2(props: any) {
         />
 
         <Group mt="md" w='100%'>
-          <Button fullWidth color='green' type="submit">הרשמה</Button>
+          <Button fullWidth color='green' type="submit">{t('register_form2_submit_button')}</Button>
         </Group>
       </form>
     </>
@@ -263,54 +270,55 @@ function Form2(props: any) {
 }
 
 function Register() {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [formValues, setFormValues] = useState({});
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const goBack = (requiredStep: number) => setStep(step => Math.min(step, requiredStep));
 
   const handleForm0Submit = (values: any) => {
-    setFormValues((prev) => ({ ...prev, ...values }));
+    setFormValues(prev => ({ ...prev, ...values }));
     setStep(1);
-  }
-
+  };
   const handleForm1Submit = (values: any) => {
-    setFormValues((prev) => ({ ...prev, ...values }));
+    setFormValues(prev => ({ ...prev, ...values }));
     setStep(2);
-  }
+  };
 
   const submitRegister = async (values: any) => {
-    setFormValues((prev) => ({ ...prev, ...values }));
-    setIsLoading(true);
-    const registerValues = { ...formValues, ...values };
     try {
-      await axios.post('/auth/register', registerValues);
-      navigate('/login');
+      setIsLoading(true);
+      setError(null);
+      await axios.post('/auth/register', { ...formValues, ...values });
+      navigate('/');
     } catch (err: any) {
       setIsLoading(false);
-      if (err.response.status === 409) {
+      if (err.response?.status === 409) {
         setStep(0);
-        setError('משתמש כבר קיים');
-      } else if (err.response.status === 500) {
-        setError('שגיאה בשרת');
-      } else if (err.response.status === 400) {
+        setError(t('error_user_exists'));
+      } else if (err.response?.status === 500) {
+        setError(t('error_server_error'));
+      } else if (err.response?.status === 400) {
         setStep(0);
-        setError('נתונים לא תקינים');
+        setError(t('error_invalid_data'));
+      } else {
+        setError(t('error_unknown'));
       }
     }
   };
 
   return (
-    <Container bg="var(--mantine-color-blue-light)" style={{ minHeight: '100vh', minWidth: '100vw' }}>
-      <Stack align='center' mt='30vh'>
+    <Container bg="var(--mantine-color-blue-light)" style={{ minHeight: '100%', minWidth: '100vw' }}>
+      <Stack align='center' mt='30vh' w='100%'>
         <Image src='/logo.png' alt='Mantine logo' maw={200} />
         {step === 0 && <Form0 onSubmit={handleForm0Submit} />}
         {step === 1 && <Form1 onSubmit={handleForm1Submit} />}
         {step === 2 && <Form2 onSubmit={submitRegister} />}
         {error && <Text c='red'>{error}</Text>}
-        <Button display={step ? 'none' : 'block'} fullWidth variant='subtle' color='green' onClick={() => navigate('/login')}>התחבר לארנק קיים</Button>
+        <Button display={step ? 'none' : 'block'} fullWidth variant='subtle' color='green' onClick={() => navigate('/login')}>{t('register_login_button')}</Button>
       </Stack>
       <Stack align='center' mt='10vh'>
         <Stepper active={step} color='green' miw={300} onStepClick={goBack}>
@@ -319,6 +327,9 @@ function Register() {
           <Stepper.Step disabled={step < 3} loading={isLoading} />
         </Stepper>
       </Stack>
+      <Flex justify='center' pos="fixed" bottom={0} w='100%' p='md' right={0} left={0}>
+        <LanguageSwitcher />
+      </Flex>
     </Container>
   );
 }

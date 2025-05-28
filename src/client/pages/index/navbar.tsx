@@ -3,21 +3,28 @@ import { IconCashBanknoteMove, IconCashPlus, IconHistory, IconLogout, IconHome, 
 import { useContext } from "react";
 import { useNavigate } from "react-router";
 import { ForPayContext } from "./context";
+import { useTranslation } from "react-i18next";
+import LanguageSwitcher from "../../components/LanguageSwitcher";
 
-export const navigationRoutes = [
-  { title: 'בית', icon: IconHome, to: '/' },
-  { title: 'הפקדה', icon: IconCashPlus, to: '/deposit', hideInBusiness: true, showOnHero: true },
-  { title: 'משיכה', icon: IconCashMinus, to: '/withdraw', showOnHero: true },
-  { title: 'העברה', icon: IconCashBanknoteMove, to: '/transfer', hideInBusiness: true, showOnHero: true },
-  { title: 'תשלום עם קוד', icon: IconBarcode, to: '/merchant-code', hideInBusiness: true, showOnHero: true },
-  { title: 'בקשת תשלום', icon: IconBarcode, to: '/merchant-payment', showOnHero: true, hideInUser: true },
-  { title: 'היסטוריית פעולות', icon: IconHistory, to: '/deposit-list' },
-  { title: 'התנתק', icon: IconLogout, to: '/auth/logout', bottom: true },
-];
+export function getNavigationRoutes(t: any) {
+  return [
+    { title: t('navbar_home'), icon: IconHome, to: '/' },
+    { title: t('navbar_deposit'), icon: IconCashPlus, to: '/deposit', hideInBusiness: true, showOnHero: true },
+    { title: t('navbar_withdraw'), icon: IconCashMinus, to: '/withdraw', showOnHero: true },
+    { title: t('navbar_transfer'), icon: IconCashBanknoteMove, to: '/transfer', hideInBusiness: true, showOnHero: true },
+    { title: t('navbar_merchant_code'), icon: IconBarcode, to: '/merchant-code', hideInBusiness: true, showOnHero: true },
+    { title: t('navbar_merchant_payment'), icon: IconBarcode, to: '/merchant-payment', showOnHero: true, hideInUser: true },
+    { title: t('navbar_history'), icon: IconHistory, to: '/deposit-list' },
+    'language-switcher' as const,
+    { title: t('navbar_logout'), icon: IconLogout, to: '/auth/logout', bottom: true },
+  ];
+}
 
 export function NavBar(props: { toggleNavbar: () => void }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useContext(ForPayContext);
+  const navigationRoutes = getNavigationRoutes(t);
 
   const navigateTo = (to: string) => () => {
     if (to.startsWith('/auth')) {
@@ -29,6 +36,11 @@ export function NavBar(props: { toggleNavbar: () => void }) {
   }
 
   return navigationRoutes.map((route, i) => {
+    if (route === 'language-switcher') {
+      return <Flex justify='center' align='center' style={{ width: '100%' }} p='lg'>
+        <LanguageSwitcher />
+      </Flex>;
+    }
     if (route.hideInBusiness && user?.type === 'MERCHANT') {
       return null;
     }
